@@ -2,6 +2,7 @@ create table if not exists `customer`(
       `customer_id` int auto_increment primary key,
       `name` varchar(100) not null,
       `email` varchar(100) not null,
+      `mobile_number` varchar(100) not null,
       `created_at` date not null,
       `created_by` varchar(100) not null,
       `updated_at` date default null,

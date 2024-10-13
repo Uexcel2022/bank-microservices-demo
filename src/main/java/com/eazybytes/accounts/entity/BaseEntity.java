@@ -1,5 +1,6 @@
 package com.eazybytes.accounts.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,8 +11,15 @@ import java.time.LocalDateTime;
 @Setter
 @MappedSuperclass
 public class BaseEntity {
-    private LocalDateTime createdAT;
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(updatable = false)
     private String createdBy;
-    private LocalDateTime updatedAT;
+
+    @Column(insertable = false)
+    private LocalDateTime updatedAt;
+
+    @Column(insertable = false)
     private String updatedBy;
 }
