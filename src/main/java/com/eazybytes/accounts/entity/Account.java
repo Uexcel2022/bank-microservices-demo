@@ -14,7 +14,4 @@ public class Account extends BaseEntity {
     private Long accountNumber;
     private String accountType;
     private String branchAddress;
-
-    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
-    private Customer customer;
 }
