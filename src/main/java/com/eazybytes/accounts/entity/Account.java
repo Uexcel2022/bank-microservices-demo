@@ -12,6 +12,7 @@ import lombok.Setter;
 public class Account extends BaseEntity {
     @Id
     private Long accountNumber;
+    private Long customerId;
     private String accountType;
     private String branchAddress;
 }
