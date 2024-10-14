@@ -6,8 +6,7 @@ import com.eazybytes.accounts.entity.Account;
 import java.time.LocalDateTime;
 
 public class AccountMapper {
-    public static Account mapToAccount(AccountDto accountDto) {
-        Account account = new Account();
+    public static Account mapToAccount(AccountDto accountDto,Account account) {
         account.setCreatedAt(LocalDateTime.now());
         account.setCreatedBy("ANONYMOUS");
         account.setAccountNumber(accountDto.getAccountNumber());

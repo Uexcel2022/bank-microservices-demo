@@ -37,8 +37,8 @@ public class AccountServiceImpl implements IAccountService {
                             + customerDto.getMobileNumber()
             );
         }
-        Customer createdCustomer = customerRepository
-                .save(CustomerMapper.mapToCustomer(customerDto));
+        Customer customer =  CustomerMapper.mapToCustomer(customerDto,new Customer());
+        Customer createdCustomer = customerRepository.save( customer);
         accountRepository.save(getNewAccount(createdCustomer));
     }
 
@@ -47,6 +47,7 @@ public class AccountServiceImpl implements IAccountService {
      * @return customer details
      */
     @Override
+    @Transactional
     public CustomerDto getCustomerByMobileNumber(String mobileNumber) {
         Customer customer =
                 customerRepository.findByMobileNumber(mobileNumber)
@@ -59,9 +60,65 @@ public class AccountServiceImpl implements IAccountService {
                                 ResourceNotFoundException("Customer","customerId",
                                 customer.getCustomerId().toString()));
 
-        CustomerDto customerDto = CustomerMapper.mapToCustomerDto(customer);
+        CustomerDto customerDto = CustomerMapper.mapToCustomerDto(customer,new CustomerDto());
         customerDto.setAccountDto(AccountMapper.mapToAccountDto(account));
         return customerDto;
+    }
+
+    /**
+     * @param customerDto
+     * @return a boolean value indicating account is updated or not
+     */
+    @Override
+    @Transactional
+    public boolean updateCustomer(CustomerDto customerDto) {
+        Long accountNo = customerDto.getAccountDto().getAccountNumber();
+
+        if(accountNo != null) {
+            Account account =
+                    accountRepository
+                            .findByAccountNumber(accountNo)
+                            .orElseThrow(() ->
+                                    new ResourceNotFoundException(
+                                            "Account", "accountNumber", accountNo.toString()));
+            accountRepository.save(AccountMapper
+                    .mapToAccount(customerDto.getAccountDto(), account));
+
+            Customer customer =
+                    customerRepository.findById(account.getCustomerId())
+                            .orElseThrow(() -> new
+                                    ResourceNotFoundException(
+                                    "Customer", "customerId",
+                                    account.getCustomerId().toString()));
+
+            customerRepository.save(CustomerMapper.mapToCustomer(customerDto, customer));
+
+            return true;
+        }
+
+        throw new ResourceNotFoundException("Account", "accountNumber", null);
+    }
+
+    /**
+     * @param accountNumber
+     * @return return boolean value indicating account is deleted or not
+     */
+    @Override
+    @Transactional
+    public boolean deleteCustomer(Long accountNumber) {
+        if(accountNumber != null){
+            Account account = accountRepository.findByAccountNumber(accountNumber)
+                    .orElseThrow(()-> new ResourceNotFoundException(
+                            "Account", "accountNumber", accountNumber.toString()));
+            Customer customer = customerRepository.findById(account.getCustomerId())
+                    .orElseThrow(()-> new ResourceNotFoundException(
+                            "Customer","customerId",account.getCustomerId().toString()));
+            accountRepository.delete(account);
+            customerRepository.delete(customer);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -71,8 +128,6 @@ public class AccountServiceImpl implements IAccountService {
     private static Account getNewAccount(Customer customer) {
         Long randomAccNo = 1000000000L + new Random().nextInt(900000000);
         Account newAccount = new Account();
-        newAccount.setCreatedAt(LocalDateTime.now());
-        newAccount.setCreatedBy("ANONYMOUS");
         newAccount.setCustomerId(customer.getCustomerId());
         newAccount.setAccountNumber(randomAccNo);
         newAccount.setAccountType(AccountConstants.SAVINGS);
