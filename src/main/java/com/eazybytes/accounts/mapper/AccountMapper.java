@@ -3,9 +3,13 @@ package com.eazybytes.accounts.mapper;
 import com.eazybytes.accounts.dto.AccountDto;
 import com.eazybytes.accounts.entity.Account;
 
+import java.time.LocalDateTime;
+
 public class AccountMapper {
-    public static Account mapToAccounts(AccountDto accountDto) {
+    public static Account mapToAccount(AccountDto accountDto) {
         Account account = new Account();
+        account.setCreatedAt(LocalDateTime.now());
+        account.setCreatedBy("ANONYMOUS");
         account.setAccountNumber(accountDto.getAccountNumber());
         account.setAccountType(accountDto.getAccountType());
         account.setBranchAddress(account.getBranchAddress());
