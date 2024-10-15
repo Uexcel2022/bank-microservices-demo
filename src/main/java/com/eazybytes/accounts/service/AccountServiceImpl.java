@@ -13,8 +13,6 @@ import com.eazybytes.accounts.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
