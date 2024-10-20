@@ -30,8 +30,8 @@ public class AccountServiceImpl implements IAccountService {
         if(customerRepository
                 .existsByMobileNumber(customerDto.getMobileNumber())) {
             throw new CustomerExistException(
-                    "There is customer with the same mobile number: "
-                            + customerDto.getMobileNumber()
+                    String.format("Mobile number %s has been used.", customerDto.getMobileNumber())
+
             );
         }
         Customer customer =  CustomerMapper.mapToCustomer(customerDto,new Customer());

@@ -13,11 +13,12 @@ import lombok.Setter;
 )
 public class ResponseDto {
     @Schema(
-            description = "Status code in the response"
+            description = "Responses codes",example = "200,417,201"
     )
     private String statusCode;
     @Schema(
-            description = "Status message in the response"
+            description = "Responses messages", example = "...Successfully, ...Fail"
     )
     private String statusMessage;
+
 }

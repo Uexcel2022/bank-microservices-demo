@@ -1,6 +1,7 @@
 package com.eazybytes.accounts.controller;
 
 import com.eazybytes.accounts.constants.AccountConstants;
+import com.eazybytes.accounts.dto.AccountsContactInfoDto;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
@@ -12,24 +13,40 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Tag(
         name = "CRUD REST APIs FOR EazyBank",
         description = "CRUD REST APIs in EazyBank to CREAT, RETRIEVE, UPDATE AND DELETE Account details"
 )
 @RestController
-@AllArgsConstructor
+//@AllArgsConstructor
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
 public class AccountsController {
 
+    @Value("${build.version}")
+    private String build;
+
+
+    private final Environment env;
     private final IAccountService iAccountService;
+    private final AccountsContactInfoDto accountsContactInfoDto;
+
+    public AccountsController(Environment env, IAccountService iAccountService, AccountsContactInfoDto accountsContactInfoDto) {
+        this.env = env;
+        this.iAccountService = iAccountService;
+        this.accountsContactInfoDto = accountsContactInfoDto;
+    }
 
     @Operation(
             summary = "REST API To Create Account ",
@@ -37,11 +54,11 @@ public class AccountsController {
             responses = {
                     @ApiResponse(
                             responseCode = "201",
-                            description = "HTTP Status CREATED"
+                            description = AccountConstants.STATUS_201_desc
                     ),
                     @ApiResponse(
                             responseCode = "500",
-                            description = "HTTP status Internal Server Error",
+                            description = AccountConstants.STATUS_500_desc ,
                             content = @Content(
                                     schema = @Schema(implementation = ErrorResponseDto.class)
                             )
@@ -63,11 +80,17 @@ public class AccountsController {
             responses = {
                     @ApiResponse(
                     responseCode = "200",
-                    description = "HTTP Status Ok"
+                    description = AccountConstants.STATUS_200_desc
                 ),
                     @ApiResponse(
+                            responseCode = "404",
+                            description = AccountConstants.STATUS_404_desc,
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
+                    ),
+                    @ApiResponse(
                         responseCode = "500",
-                        description = "HTTP status Internal Server Error",
+                        description = AccountConstants.STATUS_500_desc,
                         content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
                         )
                 )
@@ -90,11 +113,17 @@ public class AccountsController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "HTTP Status Ok"
+                            description = AccountConstants.STATUS_200_desc
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = AccountConstants.STATUS_404_desc,
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
                     ),
                     @ApiResponse(
                             responseCode = "500",
-                            description = "HTTP status Internal Server Error",
+                            description = AccountConstants.STATUS_500_desc,
 
                             content = @Content(
                                     schema = @Schema(implementation = ErrorResponseDto.class)
@@ -102,7 +131,7 @@ public class AccountsController {
                     ),
                     @ApiResponse(
                             responseCode = "417",
-                            description = "Exception Failed"
+                            description = AccountConstants.STATUS_417_desc
                     )
             }
 
@@ -126,18 +155,24 @@ public class AccountsController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "HTTP Status Ok"
+                            description = AccountConstants.STATUS_200_desc
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = AccountConstants.STATUS_404_desc,
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
                     ),
                     @ApiResponse(
                             responseCode = "500",
-                            description = "HTTP status Internal Server Error",
+                            description = AccountConstants.STATUS_500_desc,
                             content = @Content(
                             schema = @Schema(implementation = ErrorResponseDto.class)
                       )
                     ),
                     @ApiResponse(
                             responseCode = "417",
-                            description = "Exception Failed"
+                            description = AccountConstants.STATUS_417_desc
                     )
             }
 
@@ -157,5 +192,99 @@ public class AccountsController {
         }
 
     }
+
+    @Operation(
+            summary = "REST API to Fetch Build information",
+            description = "REST API to fetch application build details  inside EazyBank",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = AccountConstants.STATUS_200_desc
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = AccountConstants.STATUS_404_desc,
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = AccountConstants.STATUS_500_desc,
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping("/build-info")
+    public ResponseEntity<Map<String,String>> getBuild(){
+        Map<String,String> versionInfo = new LinkedHashMap<>();
+        versionInfo.put("Name","Eazy Bank Account Microservice");
+        versionInfo.put("version", build);
+        versionInfo.put("Build Date", "2024-10-20");
+        return ResponseEntity.ok(versionInfo);
+    }
+
+
+    @Operation(
+            summary = "REST API to Fetch JDK version",
+            description = "REST API to fetch application JDK information",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = AccountConstants.STATUS_200_desc,
+                            content = @Content(
+                                    schema = @Schema(
+                                            example = "JDK: version"
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = AccountConstants.STATUS_404_desc,
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = AccountConstants.STATUS_500_desc,
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping("/java-version")
+    public ResponseEntity<Map> getJavaVersionInfo(){
+        Map<String,String> javaInfo = new  LinkedHashMap<>();
+        javaInfo.put("JDK",env.getProperty("java.version"));
+        return ResponseEntity.ok(javaInfo);
+    }
+
+    @Operation(
+            summary = "REST API to Fetch Contact",
+            description = "REST API to fetch  contact details in EazyBank",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = AccountConstants.STATUS_200_desc
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = AccountConstants.STATUS_404_desc,
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = AccountConstants.STATUS_500_desc,
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountsContactInfoDto> getContactInfo(){
+        return ResponseEntity.ok(accountsContactInfoDto);
+    }
+
 
 }

@@ -14,19 +14,17 @@ import java.time.LocalDateTime;
 )
 public class ErrorResponseDto {
     @Schema(
-            description = "Api path invoked when the error occurred"
+            description = "API path invoked when the error occurred" ,example = "uri=/api/fetch"
     )
     private String apiPath;
     @Schema(
-            description = "Holds the status code in the response"
+            description = "Response codes" ,example = "400,500,404"
     )
     private HttpStatus errorCode;
     @Schema(
-            description = "Holds the status message in the response"
+            description = "Error massages", example = "Required parameter 'mobileNumber' is not present."
     )
     private String errorMessage;
-    @Schema(
-            description = "Holds the time the error occurred in the response"
-    )
+
     private LocalDateTime errorTime;
 }
