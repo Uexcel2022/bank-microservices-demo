@@ -143,11 +143,11 @@ public class AccountsController {
 
     )
     @DeleteMapping("/delete-account")
-    public ResponseEntity<ResponseDto> deleteAccount(@RequestParam("accountNumber")
-                                                         @Pattern(regexp = "[0-9]{10}", message = "Account number must be 10 digits")
-                                                         String accountNumber
+    public ResponseEntity<ResponseDto> deleteAccount(@RequestParam("mobileNumber")
+                                                         @Pattern(regexp = "^0[7-9][01][0-9]{8}$", message = "Invalid mobile number")
+                                                         String mobileNumber
     ){
-            Boolean isDeleted = iAccountService.deleteCustomer(Long.parseLong(accountNumber));
+            Boolean isDeleted = iAccountService.deleteCustomer(mobileNumber);
         if (isDeleted) {
             return ResponseEntity.ok()
                     .body(new ResponseDto(AccountConstants.STATUS_200, AccountConstants.MESSAGE_200));

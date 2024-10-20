@@ -1,0 +1,41 @@
+services:
+  accounts:
+    image: "uexcel247/accounts:s4"
+    container_name: account-MS
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - eazybank
+
+  loan:
+    image: "uexcel247/loan:s4"
+    container_name: loan-MS
+    ports:
+      - "8090:8090"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - eazybank
+
+
+  card:
+    image: "uexcel247/card:s4"
+    container_name: card-MS
+    ports:
+      - "9000:9000"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - eazybank
+
+networks:
+  eazybank:
+    driver: "bridge"

@@ -1,6 +1,5 @@
-package com.eazybytes.accounts.service;
+package com.eazybytes.accounts.service.impl;
 
-import com.eazybytes.accounts.constants.AccountConstants;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.entity.Account;
 import com.eazybytes.accounts.entity.Customer;
@@ -10,10 +9,10 @@ import com.eazybytes.accounts.mapper.AccountMapper;
 import com.eazybytes.accounts.mapper.CustomerMapper;
 import com.eazybytes.accounts.repository.AccountRepository;
 import com.eazybytes.accounts.repository.CustomerRepository;
+import com.eazybytes.accounts.service.IAccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Random;
 
 @Service
 @AllArgsConstructor
@@ -60,6 +59,7 @@ public class AccountServiceImpl implements IAccountService {
 
         CustomerDto customerDto = CustomerMapper.mapToCustomerDto(customer,new CustomerDto());
         customerDto.setAccountDto(AccountMapper.mapToAccountDto(account));
+
         return customerDto;
     }
 
@@ -70,7 +70,8 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     @Transactional
     public boolean updateCustomer(CustomerDto customerDto) {
-        Long accountNo = customerDto.getAccountDto().getAccountNumber();
+        Long accountNo =
+                customerDto.getAccountDto().getAccountNumber();
 
         if(accountNo != null) {
             Account account =
@@ -98,19 +99,19 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     /**
-     * @param accountNumber
+     * @param mobileNumber - mobileNumber
      * @return return boolean value indicating account is deleted or not
      */
     @Override
     @Transactional
-    public boolean deleteCustomer(Long accountNumber) {
-        if(accountNumber != null){
-            Account account = accountRepository.findByAccountNumber(accountNumber)
+    public boolean deleteCustomer(String mobileNumber) {
+        if(mobileNumber != null){
+            Customer customer = customerRepository.findByMobileNumber(mobileNumber)
                     .orElseThrow(()-> new ResourceNotFoundException(
-                            "Account", "accountNumber", accountNumber.toString()));
-            Customer customer = customerRepository.findById(account.getCustomerId())
+                            "Customer", "mobileNumber", mobileNumber));
+            Account account = accountRepository.findByCustomerId(customer.getCustomerId())
                     .orElseThrow(()-> new ResourceNotFoundException(
-                            "Customer","customerId",account.getCustomerId().toString()));
+                            "Account","customerId",customer.getCustomerId().toString()));
             accountRepository.delete(account);
             customerRepository.delete(customer);
             return true;
@@ -119,17 +120,5 @@ public class AccountServiceImpl implements IAccountService {
         return false;
     }
 
-    /**
-     * @param customer - Custer Object
-     * @return new account details
-     */
-    private static Account getNewAccount(Customer customer) {
-        Long randomAccNo = 1000000000L + new Random().nextInt(900000000);
-        Account newAccount = new Account();
-        newAccount.setCustomerId(customer.getCustomerId());
-        newAccount.setAccountNumber(randomAccNo);
-        newAccount.setAccountType(AccountConstants.SAVINGS);
-        newAccount.setBranchAddress(AccountConstants.ADDRESS);
-        return newAccount;
-    }
+
 }
