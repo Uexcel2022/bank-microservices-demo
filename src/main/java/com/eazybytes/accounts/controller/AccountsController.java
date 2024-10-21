@@ -35,7 +35,7 @@ import java.util.Map;
 public class AccountsController {
 
     @Value("${build.version}")
-    private String build;
+    private String buildVersion;
 
 
     private final Environment env;
@@ -195,7 +195,7 @@ public class AccountsController {
 
     @Operation(
             summary = "REST API to Fetch Build information",
-            description = "REST API to fetch application build details  inside EazyBank",
+            description = "REST API to fetch application buildVersion details  inside EazyBank",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -216,10 +216,10 @@ public class AccountsController {
             }
     )
     @GetMapping("/build-info")
-    public ResponseEntity<Map<String,String>> getBuild(){
+    public ResponseEntity<Map<String,String>> getBuildVersion(){
         Map<String,String> versionInfo = new LinkedHashMap<>();
         versionInfo.put("Name","Eazy Bank Account Microservice");
-        versionInfo.put("version", build);
+        versionInfo.put("version", buildVersion);
         versionInfo.put("Build Date", "2024-10-20");
         return ResponseEntity.ok(versionInfo);
     }
