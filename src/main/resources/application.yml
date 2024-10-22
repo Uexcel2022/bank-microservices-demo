@@ -17,12 +17,25 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  rabbitmq:
+    host: "localhost"
+    port: 5672
+    username: "guest"
+    password: "guest"
+
   profiles:
     active: prod
 
   config:
-    import: optional:configserver:http://localhost:8071/
+    import: "optional:configserver:http://localhost:8071/"
 #   optional:configserver:http;//localhost:8071/ -optional when the profile is not too important
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
 
 
 
